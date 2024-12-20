@@ -1250,7 +1250,7 @@ int nx_cr_run(const char *command) {
 /* }}} */
 
 /* Command Runner (Build) {{{ */
-static const char *extract_basename(const char *filepath) {
+static const char *_nx_extract_basename(const char *filepath) {
     const char *slash = strrchr(filepath, '/');
     if (slash) {
         return slash + 1;
@@ -1258,29 +1258,63 @@ static const char *extract_basename(const char *filepath) {
     return filepath;
 }
 
-static void remove_extension(char *filename) {
+static void _nx_remove_extension(char *filename) {
     char *dot = strrchr(filename, '.');
     if (dot) {
         *dot = '\0';
     }
 }
 
+int nx_compile_command(const char *description, const char **args, int arg_count,
+                       int enable_warnings) {
+    NXCR *cr;
+    int   i;
+    int   result;
+
+    cr = nx_cr_create();
+    if (!cr) {
+        fprintf(stderr, "Failed to create NXCR instance for %s.\n", description);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < arg_count; ++i) {
+        nx_cr_append(cr, args[i]);
+    }
+
+    if (enable_warnings) {
+        nx_cr_enable_gcc_warnings(cr);
+    }
+
+    result = nx_cr_execute(cr);
+    if (result != 0) {
+        printf("%sCompilation of %s failed. Output:%s\n%s\n", COLOR_RED, description, COLOR_RESET,
+               nx_cr_get_output(cr));
+    } else {
+        printf("%sCompilation of %s succeeded.%s\n", COLOR_GREEN, description, COLOR_RESET);
+    }
+
+    nx_cr_destroy(cr);
+    return result;
+}
+
 int nx_rebuild(const char *source_file, int argc, char **argv) {
     const char *basename_with_ext;
     char        basename[256];
-    char       *output_executable;
+    const char *output_executable;
     struct stat src_stat;
     struct stat exe_stat;
-    NXCR       *cr;
-    int         result;
-    int         need_build = 0;
+    int         need_build;
+    const char *args[8];
+    int         compile_result;
 
-    basename_with_ext = extract_basename(source_file);
+    basename_with_ext = _nx_extract_basename(source_file);
     strncpy(basename, basename_with_ext, sizeof(basename));
     basename[sizeof(basename) - 1] = '\0';
-    remove_extension(basename);
+    _nx_remove_extension(basename);
 
     output_executable = basename;
+
+    need_build = 0;
 
     if (stat(source_file, &src_stat) != 0) {
         perror("stat source_file");
@@ -1294,33 +1328,22 @@ int nx_rebuild(const char *source_file, int argc, char **argv) {
     }
 
     if (need_build) {
-        printf("%sRebuilding %s due to changes in %s.%s\n", COLOR_YELLOW,
-               output_executable, source_file, COLOR_RESET);
+        printf("%sRebuilding %s due to changes in %s.%s\n", COLOR_YELLOW, output_executable,
+               source_file, COLOR_RESET);
 
-        cr = nx_cr_create();
-        if (!cr) {
-            fprintf(stderr, "Failed to create NXCR instance.\n");
-            return -1;
+        args[0] = "cc";
+        args[1] = source_file;
+        args[2] = "-o";
+        args[3] = output_executable;
+        args[4] = "-Wall";
+        args[5] = "-Wextra";
+        args[6] = "-fdiagnostics-color=always";
+        args[7] = "-O2";
+
+        compile_result = nx_compile_command(output_executable, args, nx_len(args), 1);
+        if (compile_result != 0) {
+            return compile_result;
         }
-
-        nx_cr_append(cr, "cc");
-        nx_cr_append(cr, source_file);
-        nx_cr_append(cr, "-o");
-        nx_cr_append(cr, output_executable);
-        nx_cr_append(cr, "-Wall");
-        nx_cr_append(cr, "-Wextra");
-        nx_cr_append(cr, "-fdiagnostics-color=always");
-        nx_cr_append(cr, "-O2");
-
-        result = nx_cr_execute(cr);
-        if (result != 0) {
-            printf("%sCompilation failed. Output:%s\n%s\n", COLOR_RED,
-                   COLOR_RESET, nx_cr_get_output(cr));
-            nx_cr_destroy(cr);
-            return result;
-        }
-        printf("%sCompilation successful!%s\n", COLOR_GREEN, COLOR_RESET);
-        nx_cr_destroy(cr);
     }
 
     return 0;
