@@ -430,6 +430,6 @@ int main(void) {
     }
 
     nx_print_memory_leaks();
-    printf("all tests passed.\n");
+    printf("%sall tests passed.%s\n", COLOR_GREEN, COLOR_RESET);
     return 0;
 }
