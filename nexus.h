@@ -125,23 +125,22 @@ int  nx_compile_command(const char *description, const char **args, int arg_coun
 #define nx_abs(a) ((a) < 0 ? -(a) : (a))
 #define nx_clamp(a, min, max) nx_min(nx_max(a, min), max)
 #define nx_member(T, m) (((T *) 0)->m)
-#define nx_statement(code)                                                     \
-    do {                                                                       \
-        code                                                                   \
+#define nx_statement(code)                                                                         \
+    do {                                                                                           \
+        code                                                                                       \
     } while (0)
-#define nx_swap(a, b, tmp)                                                     \
-    nx_statement({                                                             \
-        tmp = a;                                                               \
-        a   = b;                                                               \
-        b   = tmp;                                                             \
+#define nx_swap(a, b, tmp)                                                                         \
+    nx_statement({                                                                                 \
+        tmp = a;                                                                                   \
+        a   = b;                                                                                   \
+        b   = tmp;                                                                                 \
     })
-#define nx_assert(condition, message)                                          \
-    nx_statement({                                                             \
-        if (!(condition)) {                                                    \
-            fprintf(stderr, "ASSERTION FAILED: %s:%d: %s\n", __FILE__,         \
-                    __LINE__, message);                                        \
-            exit(EXIT_FAILURE);                                                \
-        }                                                                      \
+#define nx_assert(condition, message)                                                              \
+    nx_statement({                                                                                 \
+        if (!(condition)) {                                                                        \
+            fprintf(stderr, "ASSERTION FAILED: %s:%d: %s\n", __FILE__, __LINE__, message);         \
+            exit(EXIT_FAILURE);                                                                    \
+        }                                                                                          \
     })
 
 /* Mathematical constants */
@@ -346,12 +345,6 @@ void  nx_print_memory_leaks(void);
 #define nx_free(ptr) free(ptr)
 #define nx_print_memory_leaks() (void) 0
 #endif /* NX_DEBUG */
-
-#define nx_die(fmt) nx_die_impl(__FILE__, __LINE__, fmt)
-#define nx_die1(fmt, a1) nx_die_impl(__FILE__, __LINE__, fmt, a1)
-#define nx_die2(fmt, a1, a2) nx_die_impl(__FILE__, __LINE__, fmt, a1, a2)
-#define nx_die3(fmt, a1, a2, a3)                                               \
-    nx_die_impl(__FILE__, __LINE__, fmt, a1, a2, a3)
 /* }}} */
 
 /* Arena {{{ */
@@ -447,7 +440,7 @@ void             nx_string_builder_append(NXStringBuilder *sb, const char *str);
 void             nx_string_builder_append_char(NXStringBuilder *sb, char c);
 const char      *nx_string_builder_to_cstring(NXStringBuilder *sb);
 void             nx_string_builder_clear(NXStringBuilder *sb);
-void nx_string_builder_resize(NXStringBuilder *sb, size_t new_capacity);
+void             nx_string_builder_resize(NXStringBuilder *sb, size_t new_capacity);
 /* }}} */
 
 /* Command Runner {{{ */
@@ -470,28 +463,28 @@ int         nx_cr_run(const char *command);
 /* Command Runner (Build) {{{ */
 int nx_rebuild(const char *source_file, int argc, char **argv);
 
-#define NX_REBUILD(argc, argv)                                                 \
-    do {                                                                       \
-        if (nx_rebuild(__FILE__, (argc), (argv)) != 0) {                       \
-            exit(EXIT_FAILURE);                                                \
-        }                                                                      \
+#define NX_REBUILD(argc, argv)                                                                     \
+    do {                                                                                           \
+        if (nx_rebuild(__FILE__, (argc), (argv)) != 0) {                                           \
+            exit(EXIT_FAILURE);                                                                    \
+        }                                                                                          \
     } while (0)
 
-#define nx_cr_enable_gcc_warnings(cr)                                          \
-    nx_cr_append(cr, "-Wall "                                                  \
-                     "-Wextra "                                                \
-                     "-Wpedantic "                                             \
-                     "-Wshadow "                                               \
-                     "-Wpointer-arith "                                        \
-                     "-Wcast-qual "                                            \
-                     "-Wno-unused-parameter "                                  \
-                     "-fstack-protector-strong "                               \
-                     "-Wswitch-default "                                       \
-                     "-Wstrict-prototypes "                                    \
-                     "-Wmissing-prototypes "                                   \
-                     "-Wmissing-declarations "                                 \
-                     "-Wredundant-decls "                                      \
-                     "-Wconversion "                                           \
+#define nx_cr_enable_gcc_warnings(cr)                                                              \
+    nx_cr_append(cr, "-Wall "                                                                      \
+                     "-Wextra "                                                                    \
+                     "-Wpedantic "                                                                 \
+                     "-Wshadow "                                                                   \
+                     "-Wpointer-arith "                                                            \
+                     "-Wcast-qual "                                                                \
+                     "-Wno-unused-parameter "                                                      \
+                     "-fstack-protector-strong "                                                   \
+                     "-Wswitch-default "                                                           \
+                     "-Wstrict-prototypes "                                                        \
+                     "-Wmissing-prototypes "                                                       \
+                     "-Wmissing-declarations "                                                     \
+                     "-Wredundant-decls "                                                          \
+                     "-Wconversion "                                                               \
                      "-Wsign-conversion")
 /* }}} */
 
@@ -586,14 +579,13 @@ void *nx_realloc_debug(void *ptr, size_t size, const char *file, int line) {
     void *newPtr = realloc(ptr, size);
     if (newPtr) {
         if (ptr == NULL) {
-            NXMemoryBlock *block =
-                (NXMemoryBlock *) malloc(sizeof(NXMemoryBlock));
-            block->ptr  = newPtr;
-            block->size = size;
-            block->file = file;
-            block->line = line;
-            block->next = memoryList;
-            memoryList  = block;
+            NXMemoryBlock *block = (NXMemoryBlock *) malloc(sizeof(NXMemoryBlock));
+            block->ptr           = newPtr;
+            block->size          = size;
+            block->file          = file;
+            block->line          = line;
+            block->next          = memoryList;
+            memoryList           = block;
         } else {
             NXMemoryBlock  *block;
             NXMemoryBlock **current = &memoryList;
@@ -721,8 +713,7 @@ void *nx_arena_alloc(NXArena *arena, size_t size) {
         size_t        new_block_size;
         NXArenaBlock *new_block;
 
-        new_block_size =
-            size > NX_ARENA_BLOCK_SIZE ? size : NX_ARENA_BLOCK_SIZE;
+        new_block_size = size > NX_ARENA_BLOCK_SIZE ? size : NX_ARENA_BLOCK_SIZE;
 
         new_block = malloc(sizeof(NXArenaBlock));
         if (!new_block) {
@@ -773,8 +764,7 @@ void nx_arena_destroy(NXArena *arena) {
 
 /* Linked Lists {{{ */
 NXSinglyLinkedList *nx_sll_create(void) {
-    NXSinglyLinkedList *list =
-        (NXSinglyLinkedList *) nx_malloc(sizeof(NXSinglyLinkedList));
+    NXSinglyLinkedList *list = (NXSinglyLinkedList *) nx_malloc(sizeof(NXSinglyLinkedList));
     if (!list) {
         return NULL;
     }
@@ -852,8 +842,7 @@ void nx_sll_destroy(NXSinglyLinkedList *list) {
 }
 
 NXDoublyLinkedList *nx_dll_create(void) {
-    NXDoublyLinkedList *list =
-        (NXDoublyLinkedList *) nx_malloc(sizeof(NXDoublyLinkedList));
+    NXDoublyLinkedList *list = (NXDoublyLinkedList *) nx_malloc(sizeof(NXDoublyLinkedList));
     if (!list) {
         return NULL;
     }
@@ -958,8 +947,7 @@ NXHashMap *nx_hashmap_create(size_t (*hash_func)(void *key),
     map->size      = 0;
     map->hash_func = hash_func ? hash_func : nx_default_hash;
     map->key_equal = key_equal ? key_equal : nx_default_key_equal;
-    map->buckets =
-        (NXHashMapEntry **) nx_calloc(map->capacity, sizeof(NXHashMapEntry *));
+    map->buckets   = (NXHashMapEntry **) nx_calloc(map->capacity, sizeof(NXHashMapEntry *));
     if (!map->buckets) {
         nx_free(map);
         return NULL;
@@ -973,17 +961,16 @@ void nx_hashmap_resize(NXHashMap *map) {
     NXHashMapEntry **old_buckets  = map->buckets;
 
     map->capacity *= 2;
-    map->buckets =
-        (NXHashMapEntry **) nx_calloc(map->capacity, sizeof(NXHashMapEntry *));
+    map->buckets = (NXHashMapEntry **) nx_calloc(map->capacity, sizeof(NXHashMapEntry *));
 
     for (i = 0; i < old_capacity; i++) {
         NXHashMapEntry *entry = old_buckets[i];
         while (entry) {
-            NXHashMapEntry *next = entry->next;
-            size_t new_index     = map->hash_func(entry->key) % map->capacity;
-            entry->next          = map->buckets[new_index];
-            map->buckets[new_index] = entry;
-            entry                   = next;
+            NXHashMapEntry *next      = entry->next;
+            size_t          new_index = map->hash_func(entry->key) % map->capacity;
+            entry->next               = map->buckets[new_index];
+            map->buckets[new_index]   = entry;
+            entry                     = next;
         }
     }
 
@@ -1074,8 +1061,7 @@ void nx_hashmap_destroy(NXHashMap *map) {
 
 /* String Builder {{{ */
 NXStringBuilder *nx_string_builder_create(void) {
-    NXStringBuilder *sb =
-        (NXStringBuilder *) nx_malloc(sizeof(NXStringBuilder));
+    NXStringBuilder *sb = (NXStringBuilder *) nx_malloc(sizeof(NXStringBuilder));
     if (!sb) {
         return NULL;
     }
@@ -1125,8 +1111,7 @@ void nx_string_builder_append(NXStringBuilder *sb, const char *str) {
 
 void nx_string_builder_append_char(NXStringBuilder *sb, char c) {
     if (sb->length + 1 >= sb->capacity) {
-        nx_string_builder_resize(sb, sb->capacity *
-                                         NX_STRING_BUILDER_GROWTH_FACTOR);
+        nx_string_builder_resize(sb, sb->capacity * NX_STRING_BUILDER_GROWTH_FACTOR);
     }
     sb->buffer[sb->length]     = c;
     sb->buffer[sb->length + 1] = '\0';
@@ -1199,15 +1184,13 @@ int nx_cr_execute(NXCR *cr) {
 
     if (pid == 0) {
         close(pipefd[0]);
-        if (dup2(pipefd[1], STDOUT_FILENO) == -1 ||
-            dup2(pipefd[1], STDERR_FILENO) == -1) {
+        if (dup2(pipefd[1], STDOUT_FILENO) == -1 || dup2(pipefd[1], STDERR_FILENO) == -1) {
             perror("dup2");
             exit(1);
         }
         close(pipefd[1]);
 
-        execlp("/bin/sh", "sh", "-c", nx_string_builder_to_cstring(cr->command),
-               NULL);
+        execlp("/bin/sh", "sh", "-c", nx_string_builder_to_cstring(cr->command), NULL);
         perror("execlp");
         exit(1);
     }
