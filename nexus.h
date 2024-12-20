@@ -103,6 +103,13 @@ typedef int bool;
 /* Function Declerations {{{ */
 int  _snprintf(char *buffer, size_t size, const char *format, ...);
 void nx_die_impl(const char *file, int line, const char *fmt, ...);
+int  nx_compile_command(const char *description, const char **args, int arg_count,
+                        int enable_warnings);
+
+#define nx_die(fmt) nx_die_impl(__FILE__, __LINE__, fmt)
+#define nx_die1(fmt, a1) nx_die_impl(__FILE__, __LINE__, fmt, a1)
+#define nx_die2(fmt, a1, a2) nx_die_impl(__FILE__, __LINE__, fmt, a1, a2)
+#define nx_die3(fmt, a1, a2, a3) nx_die_impl(__FILE__, __LINE__, fmt, a1, a2, a3)
 /* }}} */
 
 /* Macros {{{ */
