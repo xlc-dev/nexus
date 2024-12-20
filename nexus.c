@@ -32,24 +32,17 @@ int main(void) {
         nx_assert(nx_abs(-15) == 15, "nx_abs failed for -15");
         nx_assert(nx_abs(15) == 15, "nx_abs failed for 15");
         nx_assert(nx_abs(0) == 0, "nx_abs failed for 0");
-        nx_assert(nx_abs(-2147483648) == 2147483648u,
-                  "nx_abs failed for int_min");
+        nx_assert(nx_abs(-2147483648) == 2147483648u, "nx_abs failed for int_min");
     }
 
     /* nx_clamp: constrain a value to a range */
     {
-        nx_assert(nx_clamp(5, 1, 10) == 5,
-                  "nx_clamp failed for value within range");
-        nx_assert(nx_clamp(0, 1, 10) == 1,
-                  "nx_clamp failed for value below range");
-        nx_assert(nx_clamp(15, 1, 10) == 10,
-                  "nx_clamp failed for value above range");
-        nx_assert(nx_clamp(1, 1, 10) == 1,
-                  "nx_clamp failed for value equal to min");
-        nx_assert(nx_clamp(10, 1, 10) == 10,
-                  "nx_clamp failed for value equal to max");
-        nx_assert(nx_clamp(5, 5, 5) == 5,
-                  "nx_clamp failed for min equal to max");
+        nx_assert(nx_clamp(5, 1, 10) == 5, "nx_clamp failed for value within range");
+        nx_assert(nx_clamp(0, 1, 10) == 1, "nx_clamp failed for value below range");
+        nx_assert(nx_clamp(15, 1, 10) == 10, "nx_clamp failed for value above range");
+        nx_assert(nx_clamp(1, 1, 10) == 1, "nx_clamp failed for value equal to min");
+        nx_assert(nx_clamp(10, 1, 10) == 10, "nx_clamp failed for value equal to max");
+        nx_assert(nx_clamp(5, 5, 5) == 5, "nx_clamp failed for min equal to max");
     }
 
     /* nx_swap: swap the values of two variables */
@@ -92,8 +85,7 @@ int main(void) {
         nx_assert(p2.x == 1 && p2.y == 2, "nx_swap failed for structs");
 
         nx_swap(p1_ptr, p2_ptr, tmp_ptr);
-        nx_assert(*p1_ptr == 20 && *p2_ptr == 10,
-                  "nx_swap failed for pointers");
+        nx_assert(*p1_ptr == 20 && *p2_ptr == 10, "nx_swap failed for pointers");
     }
 
     /* boolean operations and logic */
@@ -109,11 +101,9 @@ int main(void) {
         nx_assert(flag2 == false, "bool assignment failed for false");
 
         nx_assert((a && a) == true, "bool logic and failed for (true && true)");
-        nx_assert((a && b) == false,
-                  "bool logic and failed for (true && false)");
+        nx_assert((a && b) == false, "bool logic and failed for (true && false)");
         nx_assert((a || b) == true, "bool logic or failed for (true || false)");
-        nx_assert((b || b) == false,
-                  "bool logic or failed for (false || false)");
+        nx_assert((b || b) == false, "bool logic or failed for (false || false)");
     }
 
     /* Arena allocator tests */
@@ -129,8 +119,7 @@ int main(void) {
         nx_assert(ptr2 != NULL, "arena_alloc failed for ptr2");
 
         nx_arena_reset(arena);
-        nx_assert(((NXArenaBlock *) arena->first)->used == 0,
-                  "arena_reset failed");
+        nx_assert(((NXArenaBlock *) arena->first)->used == 0, "arena_reset failed");
 
         ptr3 = nx_arena_alloc(arena, 50);
         nx_assert(ptr3 != NULL, "arena_alloc failed after reset");
@@ -196,32 +185,25 @@ int main(void) {
         nx_assert(map != NULL, "nx_hashmap_create failed");
 
         key1 = "apple";
-        nx_assert(nx_hashmap_insert(map, key1, &value1),
-                  "nx_hashmap_insert failed for 'apple'");
+        nx_assert(nx_hashmap_insert(map, key1, &value1), "nx_hashmap_insert failed for 'apple'");
 
         key2 = "banana";
-        nx_assert(nx_hashmap_insert(map, key2, &value2),
-                  "nx_hashmap_insert failed for 'banana'");
+        nx_assert(nx_hashmap_insert(map, key2, &value2), "nx_hashmap_insert failed for 'banana'");
 
         result = (int *) nx_hashmap_get(map, key1);
-        nx_assert(result != NULL && *result == 42,
-                  "nx_hashmap_get failed for 'apple'");
+        nx_assert(result != NULL && *result == 42, "nx_hashmap_get failed for 'apple'");
 
         result = (int *) nx_hashmap_get(map, key2);
-        nx_assert(result != NULL && *result == 33,
-                  "nx_hashmap_get failed for 'banana'");
+        nx_assert(result != NULL && *result == 33, "nx_hashmap_get failed for 'banana'");
 
         key3   = "cherry";
         result = (int *) nx_hashmap_get(map, key3);
-        nx_assert(result == NULL,
-                  "nx_hashmap_get failed for non-existent key 'cherry'");
+        nx_assert(result == NULL, "nx_hashmap_get failed for non-existent key 'cherry'");
 
-        nx_assert(nx_hashmap_remove(map, key1),
-                  "nx_hashmap_remove failed for 'apple'");
+        nx_assert(nx_hashmap_remove(map, key1), "nx_hashmap_remove failed for 'apple'");
 
         result = (int *) nx_hashmap_get(map, key1);
-        nx_assert(result == NULL,
-                  "nx_hashmap_get failed after removal of 'apple'");
+        nx_assert(result == NULL, "nx_hashmap_get failed after removal of 'apple'");
 
         nx_hashmap_destroy(map);
     }
@@ -236,8 +218,7 @@ int main(void) {
             char msg[256];
             nx_snprintf(msg, sizeof(msg), "Expected 'Hello', but got: %s",
                         nx_string_builder_to_cstring(sb));
-            nx_assert(strcmp(nx_string_builder_to_cstring(sb), "Hello") == 0,
-                      msg);
+            nx_assert(strcmp(nx_string_builder_to_cstring(sb), "Hello") == 0, msg);
         }
 
         nx_string_builder_append(sb, " ");
@@ -246,20 +227,15 @@ int main(void) {
             char msg[256];
             nx_snprintf(msg, sizeof(msg), "Expected 'Hello World', but got: %s",
                         nx_string_builder_to_cstring(sb));
-            nx_assert(strcmp(nx_string_builder_to_cstring(sb), "Hello World") ==
-                          0,
-                      msg);
+            nx_assert(strcmp(nx_string_builder_to_cstring(sb), "Hello World") == 0, msg);
         }
 
         nx_string_builder_append_char(sb, '!');
         {
             char msg[256];
-            nx_snprintf(msg, sizeof(msg),
-                        "Expected 'Hello World!', but got: %s",
+            nx_snprintf(msg, sizeof(msg), "Expected 'Hello World!', but got: %s",
                         nx_string_builder_to_cstring(sb));
-            nx_assert(
-                strcmp(nx_string_builder_to_cstring(sb), "Hello World!") == 0,
-                msg);
+            nx_assert(strcmp(nx_string_builder_to_cstring(sb), "Hello World!") == 0, msg);
         }
 
         nx_string_builder_clear(sb);
@@ -275,8 +251,7 @@ int main(void) {
             char msg[256];
             nx_snprintf(msg, sizeof(msg), "Expected 'Nexus', but got: %s",
                         nx_string_builder_to_cstring(sb));
-            nx_assert(strcmp(nx_string_builder_to_cstring(sb), "Nexus") == 0,
-                      msg);
+            nx_assert(strcmp(nx_string_builder_to_cstring(sb), "Nexus") == 0, msg);
         }
 
         nx_string_builder_destroy(sb);
@@ -293,12 +268,10 @@ int main(void) {
             remove(test_filename);
 
             file = nx_file_open(test_filename, "w");
-            nx_assert(file != NULL,
-                      "nx_file_open failed to open file for writing");
+            nx_assert(file != NULL, "nx_file_open failed to open file for writing");
             nx_assert(strcmp(file->filename, test_filename) == 0,
                       "nx_file_open did not set filename correctly");
-            nx_assert(strcmp(file->mode, "w") == 0,
-                      "nx_file_open did not set mode correctly");
+            nx_assert(strcmp(file->mode, "w") == 0, "nx_file_open did not set mode correctly");
 
             written = fwrite(test_content, 1, strlen(test_content), file->file);
             nx_assert(written == strlen(test_content),
@@ -315,22 +288,19 @@ int main(void) {
         /* Test nx_file_write_all and nx_file_read_all */
         {
             const char *test_filename = "test_write_read.txt";
-            const char *test_content =
-                "This is a test string for nx_file_write_all and "
-                "nx_file_read_all.";
-            int   write_result;
-            char *read_content;
+            const char *test_content  = "This is a test string for nx_file_write_all and "
+                                        "nx_file_read_all.";
+            int         write_result;
+            char       *read_content;
 
             write_result = nx_file_write_all(test_filename, test_content);
-            nx_assert(write_result == 0,
-                      "nx_file_write_all failed to write to the file");
+            nx_assert(write_result == 0, "nx_file_write_all failed to write to the file");
 
             nx_assert(nx_file_exists(test_filename) == 1,
                       "nx_file_write_all did not create the file");
 
             read_content = nx_file_read_all(test_filename);
-            nx_assert(read_content != NULL,
-                      "nx_file_read_all failed to read from the file");
+            nx_assert(read_content != NULL, "nx_file_read_all failed to read from the file");
             nx_assert(strcmp(read_content, test_content) == 0,
                       "nx_file_read_all read incorrect content");
 
@@ -377,17 +347,14 @@ int main(void) {
 
             empty_filename = "empty_file.txt";
             empty_file     = fopen(empty_filename, "w");
-            nx_assert(empty_file != NULL,
-                      "Failed to create empty_file.txt for size testing");
+            nx_assert(empty_file != NULL, "Failed to create empty_file.txt for size testing");
             fclose(empty_file);
 
             size = nx_file_size(empty_filename);
-            nx_assert(size == 0,
-                      "nx_file_size did not return 0 for empty file");
+            nx_assert(size == 0, "nx_file_size did not return 0 for empty file");
 
             size = nx_file_size("no_such_file.txt");
-            nx_assert(size == -1,
-                      "nx_file_size did not return -1 for non-existent file");
+            nx_assert(size == -1, "nx_file_size did not return -1 for non-existent file");
 
             remove(test_filename);
             remove(empty_filename);
@@ -405,16 +372,13 @@ int main(void) {
             binary_size = sizeof(binary_data);
 
             file = fopen(test_filename, "wb");
-            nx_assert(file != NULL,
-                      "Failed to open test_binary.bin for writing");
+            nx_assert(file != NULL, "Failed to open test_binary.bin for writing");
             written = fwrite(binary_data, 1, binary_size, file);
-            nx_assert(written == binary_size,
-                      "Failed to write binary data correctly");
+            nx_assert(written == binary_size, "Failed to write binary data correctly");
             fclose(file);
 
             read_data = nx_file_read_all(test_filename);
-            nx_assert(read_data != NULL,
-                      "nx_file_read_all failed to read binary data");
+            nx_assert(read_data != NULL, "nx_file_read_all failed to read binary data");
             nx_assert(memcmp(read_data, binary_data, binary_size) == 0,
                       "nx_file_read_all read incorrect binary data");
             nx_free(read_data);
@@ -440,9 +404,7 @@ int main(void) {
             nx_file_close(file_a);
 
             content = nx_file_read_all(test_filename);
-            nx_assert(
-                content != NULL,
-                "nx_file_read_all failed to read file with multiple writes");
+            nx_assert(content != NULL, "nx_file_read_all failed to read file with multiple writes");
             nx_assert(strstr(content, "Mode W Content") != NULL,
                       "File does not contain 'Mode W Content'");
             nx_assert(strstr(content, "Mode A Content") != NULL,
@@ -458,8 +420,7 @@ int main(void) {
             NXFile *nonexistent_file;
 
             invalid_file = nx_file_open("invalid_mode.txt", "invalid_mode");
-            nx_assert(invalid_file == NULL,
-                      "nx_file_open did not fail with invalid mode");
+            nx_assert(invalid_file == NULL, "nx_file_open did not fail with invalid mode");
 
             nonexistent_file = nx_file_open("nonexistent.txt", "r");
             nx_assert(nonexistent_file == NULL,
