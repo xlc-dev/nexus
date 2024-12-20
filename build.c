@@ -26,9 +26,7 @@ int main(int argc, char **argv) {
 
     int result = nx_cr_execute(cr);
 
-    if (result == 0) {
-        printf("%sCompilation successful!%s\n", COLOR_GREEN, COLOR_RESET);
-    } else {
+    if (result != 0) {
         printf("%sCompilation failed. Output:%s\n%s\n", COLOR_RED, COLOR_RESET,
                nx_cr_get_output(cr));
     }
