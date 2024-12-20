@@ -100,8 +100,9 @@ typedef int bool;
 #define NX_STRING_BUILDER_GROWTH_FACTOR 2
 #endif
 
-/* Compat Layer {{{ */
-int _snprintf(char *buffer, size_t size, const char *format, ...);
+/* Function Declerations {{{ */
+int  _snprintf(char *buffer, size_t size, const char *format, ...);
+void nx_die_impl(const char *file, int line, const char *fmt, ...);
 /* }}} */
 
 /* Macros {{{ */
@@ -338,6 +339,12 @@ void  nx_print_memory_leaks(void);
 #define nx_free(ptr) free(ptr)
 #define nx_print_memory_leaks() (void) 0
 #endif /* NX_DEBUG */
+
+#define nx_die(fmt) nx_die_impl(__FILE__, __LINE__, fmt)
+#define nx_die1(fmt, a1) nx_die_impl(__FILE__, __LINE__, fmt, a1)
+#define nx_die2(fmt, a1, a2) nx_die_impl(__FILE__, __LINE__, fmt, a1, a2)
+#define nx_die3(fmt, a1, a2, a3)                                               \
+    nx_die_impl(__FILE__, __LINE__, fmt, a1, a2, a3)
 /* }}} */
 
 /* Arena {{{ */
@@ -638,14 +645,39 @@ void nx_print_memory_leaks(void) {
 #endif /* NX_DEBUG */
 /* }}}} */
 
+/* Error Handling {{{ */
+void nx_die_impl(const char *file, int line, const char *fmt, ...) {
+    va_list args;
+    size_t  fmt_len;
+
+    fprintf(stderr, "Fatal Error in %s:%d: ", file, line);
+    va_start(args, fmt);
+    vfprintf(stderr, fmt, args);
+    va_end(args);
+
+    fmt_len = strlen(fmt);
+    if (fmt_len > 0 && fmt[fmt_len - 1] == ':') {
+        fputc(' ', stderr);
+        perror(NULL);
+    } else {
+        fputc('\n', stderr);
+    }
+
+    nx_print_memory_leaks();
+
+    exit(EXIT_FAILURE);
+}
+/* }}} */
+
 /* Arena {{{ */
 NXArena *nx_arena_create(void) {
     NXArena      *arena;
     NXArenaBlock *block;
 
     arena = malloc(sizeof(NXArena));
-    if (!arena)
+    if (!arena) {
         return NULL;
+    }
 
     block = malloc(sizeof(NXArenaBlock));
     if (!block) {
@@ -686,8 +718,9 @@ void *nx_arena_alloc(NXArena *arena, size_t size) {
             size > NX_ARENA_BLOCK_SIZE ? size : NX_ARENA_BLOCK_SIZE;
 
         new_block = malloc(sizeof(NXArenaBlock));
-        if (!new_block)
+        if (!new_block) {
             return NULL;
+        }
 
         new_block->memory = malloc(new_block_size);
         if (!new_block->memory) {
@@ -735,16 +768,18 @@ void nx_arena_destroy(NXArena *arena) {
 NXSinglyLinkedList *nx_sll_create(void) {
     NXSinglyLinkedList *list =
         (NXSinglyLinkedList *) nx_malloc(sizeof(NXSinglyLinkedList));
-    if (!list)
+    if (!list) {
         return NULL;
+    }
     list->head = list->tail = NULL;
     return list;
 }
 
 void nx_sll_append(NXSinglyLinkedList *list, void *data) {
     NXSLLNode *new_node = (NXSLLNode *) nx_malloc(sizeof(NXSLLNode));
-    if (!new_node)
+    if (!new_node) {
         return;
+    }
 
     new_node->data = data;
     new_node->next = NULL;
@@ -760,8 +795,9 @@ void nx_sll_append(NXSinglyLinkedList *list, void *data) {
 
 void nx_sll_prepend(NXSinglyLinkedList *list, void *data) {
     NXSLLNode *new_node = (NXSLLNode *) nx_malloc(sizeof(NXSLLNode));
-    if (!new_node)
+    if (!new_node) {
         return;
+    }
 
     new_node->data = data;
     new_node->next = list->head;
@@ -811,16 +847,18 @@ void nx_sll_destroy(NXSinglyLinkedList *list) {
 NXDoublyLinkedList *nx_dll_create(void) {
     NXDoublyLinkedList *list =
         (NXDoublyLinkedList *) nx_malloc(sizeof(NXDoublyLinkedList));
-    if (!list)
+    if (!list) {
         return NULL;
+    }
     list->head = list->tail = NULL;
     return list;
 }
 
 void nx_dll_append(NXDoublyLinkedList *list, void *data) {
     NXDLLNode *new_node = (NXDLLNode *) nx_malloc(sizeof(NXDLLNode));
-    if (!new_node)
+    if (!new_node) {
         return;
+    }
 
     new_node->data = data;
     new_node->next = NULL;
@@ -960,8 +998,9 @@ bool nx_hashmap_insert(NXHashMap *map, void *key, void *value) {
     }
 
     new_entry = (NXHashMapEntry *) nx_malloc(sizeof(NXHashMapEntry));
-    if (!new_entry)
+    if (!new_entry) {
         return false;
+    }
     new_entry->key      = key;
     new_entry->value    = value;
     new_entry->next     = map->buckets[index];
@@ -1100,8 +1139,9 @@ void nx_string_builder_clear(NXStringBuilder *sb) {
 /* Command Runner {{{ */
 NXCR *nx_cr_create(void) {
     NXCR *cr = (NXCR *) nx_malloc(sizeof(NXCR));
-    if (!cr)
+    if (!cr) {
         return NULL;
+    }
 
     cr->command = nx_string_builder_create();
     if (!cr->command) {
