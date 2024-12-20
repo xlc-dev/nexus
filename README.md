@@ -5,6 +5,7 @@ Nexus is a collection of header-only [stb-style](https://github.com/nothings/stb
 ## Headers
 
 - **`nexus.h`**: Contains essential data structures, macros, and utilities for general-purpose use. Making C bearable.
+- **glad/**: opengl core 3.3 loader.
 
 ## Installation
 
