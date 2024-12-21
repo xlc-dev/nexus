@@ -1,7 +1,7 @@
 #define NX_DEBUG
 
-#define NUI_IMPLEMENTATION
-#include "nui.h"
+#define NXUI_IMPLEMENTATION
+#include "nxui.h"
 
 #define NEXUS_IMPLEMENTATION
 #include "nexus.h"
@@ -436,7 +436,7 @@ int main(void) {
     }
 
     /*************************************************************************
-     * 2) NUI tests
+     * 2) NXUI tests
      *************************************************************************/
     {
         GLFWwindow *window;
@@ -449,7 +449,7 @@ int main(void) {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-        window = glfwCreateWindow(640, 480, "NUI Test Window (Hidden)", NULL, NULL);
+        window = glfwCreateWindow(640, 480, "NXUI Test Window (Hidden)", NULL, NULL);
         if (!window) {
             glfwTerminate();
             nx_die("Failed to create hidden GLFW window");
@@ -463,23 +463,23 @@ int main(void) {
         }
 
         {
-            NUIContext *context = nui_context_init();
-            nx_assert(context != NULL, "nui_context_init returned NULL");
+            NXUIContext *context = nxui_context_init();
+            nx_assert(context != NULL, "nxui_context_init returned NULL");
 
             /* Add a shader that includes our declared uniforms. */
             {
-                NUIShaderProgram shader =
-                    nui_create_shader_program(test_vertex_src, test_fragment_src);
-                nx_assert(shader.program_id != 0, "nui_create_shader_program failed");
+                NXUIShaderProgram shader =
+                    nxui_create_shader_program(test_vertex_src, test_fragment_src);
+                nx_assert(shader.program_id != 0, "nxui_create_shader_program failed");
 
-                nui_context_add_shader(context, shader);
-                nx_assert(context->shader_count == 1, "nui_context_add_shader count != 1");
+                nxui_context_add_shader(context, shader);
+                nx_assert(context->shader_count == 1, "nxui_context_add_shader count != 1");
             }
 
             /* Create one mesh with a single attribute (position). */
             {
-                NUIMesh      mesh;
-                NUIAttribute attributes[1];
+                NXUIMesh      mesh;
+                NXUIAttribute attributes[1];
                 attributes[0].index      = 0; /* matches 'layout(location = 0)' */
                 attributes[0].size       = 3; /* 3 floats for position */
                 attributes[0].type       = GL_FLOAT;
@@ -487,39 +487,39 @@ int main(void) {
                 attributes[0].stride     = 3 * sizeof(float);
                 attributes[0].offset     = (void *) 0;
 
-                mesh = nui_create_mesh(test_vertices, sizeof(test_vertices), test_indices,
-                                       sizeof(test_indices), 1, attributes, GL_STATIC_DRAW);
-                nx_assert(mesh.vao != 0, "nui_create_mesh failed (VAO=0)");
-                nx_assert(mesh.vbo != 0, "nui_create_mesh failed (VBO=0)");
-                nx_assert(mesh.ebo != 0, "nui_create_mesh failed (EBO=0)");
-                nx_assert(mesh.index_count == 3, "nui_create_mesh failed (idx_count!=3)");
+                mesh = nxui_create_mesh(test_vertices, sizeof(test_vertices), test_indices,
+                                        sizeof(test_indices), 1, attributes, GL_STATIC_DRAW);
+                nx_assert(mesh.vao != 0, "nxui_create_mesh failed (VAO=0)");
+                nx_assert(mesh.vbo != 0, "nxui_create_mesh failed (VBO=0)");
+                nx_assert(mesh.ebo != 0, "nxui_create_mesh failed (EBO=0)");
+                nx_assert(mesh.index_count == 3, "nxui_create_mesh failed (idx_count!=3)");
 
                 /* Assign the first (and only) shader in context to this mesh. */
                 mesh.shader = &context->shaders[0];
-                nui_context_add_mesh(context, mesh);
-                nx_assert(context->mesh_count == 1, "nui_context_add_mesh count!=1");
+                nxui_context_add_mesh(context, mesh);
+                nx_assert(context->mesh_count == 1, "nxui_context_add_mesh count!=1");
             }
 
             /* Test uniform setting on the single available shader. */
             {
-                nui_use_shader_program(&context->shaders[0]);
-                nui_set_uniform_float(&context->shaders[0], "testFloat", 3.14f);
-                nui_set_uniform_int(&context->shaders[0], "testInt", 42);
-                nui_set_uniform_vec4(&context->shaders[0], "testVec4", 1.0f, 0.0f, 1.0f, 1.0f);
-                /* If the uniform doesn't exist in the shader, this would nx_die(). */
+                nxui_use_shader_program(&context->shaders[0]);
+                nxui_set_uniform_float(&context->shaders[0], "testFloat", 3.14f);
+                nxui_set_uniform_int(&context->shaders[0], "testInt", 42);
+                nxui_set_uniform_vec4(&context->shaders[0], "testVec4", 1.0f, 0.0f, 1.0f, 1.0f);
+                /* nx_die() is called if the uniform is unused or missing in the shader. */
             }
 
-            /* Attempt a quick single-pass render with our NUI context. */
+            /* Attempt a quick single-pass render with our NXUI context. */
             {
                 glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
                 glClear(GL_COLOR_BUFFER_BIT);
 
-                nui_render_ui(context);
+                nxui_render_ui(context);
 
                 glfwSwapBuffers(window);
             }
 
-            nui_context_destroy(context);
+            nxui_context_destroy(context);
         }
 
         glfwDestroyWindow(window);
