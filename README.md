@@ -5,15 +5,16 @@ Nexus is a collection of header-only [stb-style](https://github.com/nothings/stb
 ## Headers
 
 - **`nexus.h`**: Contains essential data structures, macros, and utilities for general-purpose use. Making C bearable.
+- **nui.h*: OpenGL low-level UI library.
 - **glad/**: opengl core 3.3 loader.
 
 ## Installation
 
-Since Nexus is header-only, installation is easy. Just include `nexus.h` **and** any other specific header(s) in your project as needed.
+Since Nexus libraries are header-only, installation is easy. Just include `nexus.h` **and/or** any other specific header(s) in your project as needed.
 
 ## Examples
 
-To see how Nexus works, take a look at the corresponding `*.c` files. These files contain tests that not only check that the functions in the `*.h` files work correctly but also show how to use them in practice. Each test demonstrates a feature of the library and serves as a usage example, making it easy to understand how to integrate Nexus into your own code.
+To see how Nexus works, take a look at `main.c`. This file contains tests that not only check that the functions in the `*.h` files work correctly but also show how to use them in practice. Each test demonstrates a feature of the library and serves as a usage example, making it easy to understand how to integrate Nexus into your own code.
 
 ## Contributing
 
