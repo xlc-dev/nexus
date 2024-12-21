@@ -5,7 +5,7 @@ Nexus is a collection of header-only [stb-style](https://github.com/nothings/stb
 ## Headers
 
 - **`nexus.h`**: Contains essential data structures, macros, and utilities for general-purpose use. Making C bearable.
-- **nui.h*: OpenGL low-level UI library.
+- **nxui.h*: OpenGL low-level UI library.
 - **glad/**: opengl core 3.3 loader.
 
 ## Installation
@@ -18,7 +18,7 @@ To see how Nexus works, take a look at `main.c`. This file contains tests that n
 
 ## Contributing
 
-If you would like to contribute, you only need a C compiler. To bootstrap the project, run the following commands:
+If you would like to contribute, you need a C compiler and [GLFW](https://github.com/glfw/glfw) installed. To bootstrap the project, run the following commands:
 
 ```bash
 git clone https://github.com/xlc-dev/nexus.git
