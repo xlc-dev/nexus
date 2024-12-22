@@ -456,8 +456,6 @@ int main(void) {
         }
         glfwMakeContextCurrent(window);
 
-        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); /* Hide the window */
-
         if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
             nx_die("Failed to initialize GLAD");
         }
