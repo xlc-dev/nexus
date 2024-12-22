@@ -75,4 +75,4 @@ By following these guidelines, you help maintain the consistency, portability, a
 
 ## License
 
-Nexus is licensed under the [GPL-3.0 License](https://www.gnu.org/licenses/gpl-3.0.html). Please see the [LICENSE](LICENSE) file for more details.
+Nexus is licensed under the [MPL-2.0 License](https://www.mozilla.org/en-US/MPL/2.0/). Please see the [LICENSE](LICENSE) file or the [MPL-2.0 FAQ](https://www.mozilla.org/en-US/MPL/2.0/FAQ/) for more details.
