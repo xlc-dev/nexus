@@ -11,7 +11,7 @@
     "-flto"
 /* clang-format on */
 
-static void print_help() {
+static void print_help(void) {
     printf("Usage: nexus [options]\n\n");
     printf("Options:\n");
     printf("  --help, -h       Show this help menu\n");
