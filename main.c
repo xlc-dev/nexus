@@ -433,6 +433,38 @@ int main(void) {
                 nx_assert(nonexistent_file == NULL, "nx_file_open should fail non-existent(r)");
             }
         }
+        /* Logging */
+        {
+            NXLogger *logger;
+            char     *log_contents;
+
+            /* Ensure log file does not exist before creating the logger */
+            remove("log.txt");
+
+            logger = nx_logger_create("log.txt", false, true, NX_LOG_TRACE);
+            nx_assert(logger != NULL, "nx_logger_create failed");
+
+            nx_logger_info(logger, "This is an info message");
+            nx_logger_warn(logger, "This is a warning message");
+            nx_logger_error(logger, "This is an error message");
+            nx_logger_fatal(logger, "This is a fatal message");
+
+            log_contents = nx_file_read_all("log.txt");
+            nx_assert(log_contents != NULL, "nx_file_read_all failed");
+
+            nx_assert(strstr(log_contents, "[INFO] This is an info message") != NULL,
+                      "missing 'This is an info message'");
+            nx_assert(strstr(log_contents, "[WARN] This is a warning message") != NULL,
+                      "missing 'This is a warning message'");
+            nx_assert(strstr(log_contents, "[ERROR] This is an error message") != NULL,
+                      "missing 'This is an error message'");
+            nx_assert(strstr(log_contents, "[FATAL] This is a fatal message") != NULL,
+                      "missing 'This is a fatal message'");
+
+            nx_free(log_contents);
+            remove("log.txt");
+            nx_logger_destroy(logger);
+        }
     }
 
     /*************************************************************************
