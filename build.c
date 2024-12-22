@@ -34,12 +34,12 @@ int main(int argc, char **argv) {
     const char *files_to_remove[] = {"glad.o", "nexus"};
 
     for (int i = 1; i < argc; i++) {
-        if (!strcmp(argv[i], "--help") || !strcmp(argv[i], "-h")) {
+        if (!nx_strcmp(argv[i], "--help") || !nx_strcmp(argv[i], "-h")) {
             print_help();
             return EXIT_SUCCESS;
         }
 
-        if (!strcmp(argv[i], "--clean") || !strcmp(argv[i], "-c")) {
+        if (!nx_strcmp(argv[i], "--clean") || !nx_strcmp(argv[i], "-c")) {
             return clean(files_to_remove, nx_len(files_to_remove));
         }
     }
