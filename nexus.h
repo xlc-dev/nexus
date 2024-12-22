@@ -642,7 +642,7 @@ int         nx_cr_run(const char *command);
 /* Command Runner (Build) {{{ */
 int nx_rebuild(const char *source_file, int argc, char **argv);
 int nx_compile_command(const char *description, const char **args, int arg_count,
-                       int enable_warnings);
+                       bool enable_warnings);
 
 #define NX_REBUILD(argc, argv)                                                                     \
     do {                                                                                           \
@@ -696,8 +696,8 @@ typedef enum {
 
 typedef struct {
     NXFile          *file;
-    int              use_stdout;
-    int              use_timestamps;
+    bool             use_stdout;
+    bool             use_timestamps;
     NXLogLevel       min_level;
     NXStringBuilder *buffer;
 } NXLogger;
@@ -713,7 +713,7 @@ const char *NX_LOG_LEVEL_COLORS[] = {
     COLOR_MAGENTA       /* FATAL */
 };
 
-NXLogger *nx_logger_create(const char *filename, int use_stdout, int use_timestamps,
+NXLogger *nx_logger_create(const char *filename, bool use_stdout, bool use_timestamps,
                            NXLogLevel min_level);
 void      nx_logger_destroy(NXLogger *logger);
 void      nx_logger_log(NXLogger *logger, NXLogLevel level, const char *format, ...);
@@ -1489,7 +1489,7 @@ static void _nx_remove_extension(char *filename) {
 }
 
 int nx_compile_command(const char *description, const char **args, int arg_count,
-                       int enable_warnings) {
+                       bool enable_warnings) {
     NXCR *cr;
     int   i;
     int   result;
@@ -1747,7 +1747,7 @@ static void _nx_logger_write(NXLogger *logger, NXLogLevel level) {
     }
 }
 
-NXLogger *nx_logger_create(const char *filename, int use_stdout, int use_timestamps,
+NXLogger *nx_logger_create(const char *filename, bool use_stdout, bool use_timestamps,
                            NXLogLevel min_level) {
     NXLogger *logger = (NXLogger *) nx_malloc(sizeof(NXLogger));
     if (!logger) {
