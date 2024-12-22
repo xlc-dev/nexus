@@ -60,6 +60,12 @@
  *        Sets the growth factor of the string builder. Default is 2.
  *
  * ===== VERSIONING =======================================================
+ * Version: 0.1.1
+ * Release Date: 22-12-2024
+ *
+ * Changelog:
+ * - Make use of boolean flags
+ *
  * Version: 0.1.0
  * Release Date: 22-12-2024
  *
