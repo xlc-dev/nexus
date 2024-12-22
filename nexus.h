@@ -423,6 +423,11 @@ typedef int bool;
 #define nx_snprintf snprintf
 #define nx_vsnprintf vsnprintf
 #else
+static int fallback_snprintf(char *str, size_t size, const char *format, ...)
+    __attribute__((unused));
+static int fallback_vsnprintf(char *str, size_t size, const char *format, va_list ap)
+    __attribute__((unused));
+
 static int fallback_snprintf(char *str, size_t size, const char *format, ...) {
     int     ret;
     va_list args;
@@ -469,6 +474,7 @@ static int fallback_vsnprintf(char *str, size_t size, const char *format, va_lis
 
     return ret;
 }
+
 #define nx_snprintf fallback_snprintf
 #define nx_vsnprintf fallback_vsnprintf
 #endif
