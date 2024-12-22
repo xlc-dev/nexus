@@ -65,12 +65,12 @@ int main(int argc, char **argv) {
     };
     /* clang-format on */
 
-    int glad_result = nx_compile_command("glad", glad_args, nx_len(glad_args), 0);
+    int glad_result = nx_compile_command("glad", glad_args, nx_len(glad_args), false);
     if (glad_result != 0) {
         return glad_result;
     }
 
-    int nexus_result = nx_compile_command("nexus", nexus_args, nx_len(nexus_args), 1);
+    int nexus_result = nx_compile_command("nexus", nexus_args, nx_len(nexus_args), true);
     if (nexus_result != 0) {
         return nexus_result;
     }
