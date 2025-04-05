@@ -40,6 +40,13 @@
  *        use your own OpenGL loader.
  *
  * ===== VERSIONING =======================================================
+ * Version: 0.0.2
+ * Release Date: 05-04-2025
+ *
+ * Changelog:
+ * - Add mode to NXUIMesh
+ * - Add vec2 and vec3 uniform setters
+ * - Add clear function
  *
  * Version: 0.0.1
  * Release Date: 21-12-2024
@@ -79,6 +86,7 @@ typedef struct {
 } NXUIShaderProgram;
 
 typedef struct {
+    GLenum             mode;
     GLuint             vao;
     GLuint             vbo;
     GLuint             ebo;
@@ -121,8 +129,12 @@ NXUIMesh nxui_create_mesh(const void *vertex_data, size_t vertex_size, const uns
 
 void nxui_set_uniform_float(NXUIShaderProgram *shader, const char *name, float value);
 void nxui_set_uniform_int(NXUIShaderProgram *shader, const char *name, int value);
+void nxui_set_uniform_vec2(NXUIShaderProgram *shader, const char *name, float x, float y);
+void nxui_set_uniform_vec3(NXUIShaderProgram *shader, const char *name, float x, float y, float z);
 void nxui_set_uniform_vec4(NXUIShaderProgram *shader, const char *name, float x, float y, float z,
                            float w);
+
+void nxui_clear(float r, float g, float b, float a);
 #endif /* NXUI_H */
 
 #ifdef NXUI_IMPLEMENTATION
@@ -237,8 +249,9 @@ NXUIMesh nxui_create_mesh(const void *vertex_data, size_t vertex_size, const uns
     unsigned int *auto_indices = NULL;
     size_t        i;
 
-    mesh.vao = _nxui_create_vao();
-    mesh.vbo = _nxui_create_vbo(vertex_data, vertex_size, usage);
+    mesh.mode = GL_TRIANGLES;
+    mesh.vao  = _nxui_create_vao();
+    mesh.vbo  = _nxui_create_vbo(vertex_data, vertex_size, usage);
 
     if (!indices && vertex_size > 0) {
         size_t stride_sz = attributes[0].stride ? (size_t) attributes[0].stride : sizeof(float);
@@ -337,7 +350,8 @@ void nxui_render_ui(NXUIContext *context) {
         for (j = 0; j < context->mesh_count; j++) {
             if (context->meshes[j].shader == &context->shaders[i]) {
                 glBindVertexArray(context->meshes[j].vao);
-                glDrawElements(GL_TRIANGLES, context->meshes[j].index_count, GL_UNSIGNED_INT, 0);
+                glDrawElements(context->meshes[j].mode, context->meshes[j].index_count,
+                               GL_UNSIGNED_INT, 0);
             }
         }
     }
@@ -360,6 +374,22 @@ void nxui_set_uniform_int(NXUIShaderProgram *shader, const char *name, int value
     glUniform1i(location, value);
 }
 
+void nxui_set_uniform_vec2(NXUIShaderProgram *shader, const char *name, float x, float y) {
+    GLint location = glGetUniformLocation(shader->program_id, name);
+    if (location == -1) {
+        nx_die1("Uniform '%s' not found in shader program.", name);
+    }
+    glUniform2f(location, x, y);
+}
+
+void nxui_set_uniform_vec3(NXUIShaderProgram *shader, const char *name, float x, float y, float z) {
+    GLint location = glGetUniformLocation(shader->program_id, name);
+    if (location == -1) {
+        nx_die1("Uniform '%s' not found in shader program.", name);
+    }
+    glUniform3f(location, x, y, z);
+}
+
 void nxui_set_uniform_vec4(NXUIShaderProgram *shader, const char *name, float x, float y, float z,
                            float w) {
     GLint location = glGetUniformLocation(shader->program_id, name);
@@ -367,5 +397,10 @@ void nxui_set_uniform_vec4(NXUIShaderProgram *shader, const char *name, float x,
         nx_die1("Uniform '%s' not found in shader program.", name);
     }
     glUniform4f(location, x, y, z, w);
+}
+
+void nxui_clear(float r, float g, float b, float a) {
+    glClearColor(r, g, b, a);
+    glClear(GL_COLOR_BUFFER_BIT);
 }
 #endif /* NXUI_IMPLEMENTATION */
