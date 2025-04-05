@@ -441,7 +441,7 @@ int main(void) {
             /* Ensure log file does not exist before creating the logger */
             remove("log.txt");
 
-            logger = nx_logger_create("log.txt", false, true, NX_LOG_TRACE);
+            logger = nx_logger_create("log.txt", true, true, NX_LOG_TRACE);
             nx_assert(logger != NULL, "nx_logger_create failed");
 
             nx_logger_info(logger, "This is an info message");
